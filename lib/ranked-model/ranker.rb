@@ -266,6 +266,11 @@ module RankedModel
               columns << column
               _finder = _finder.where column => instance.attributes[column.to_s]
             end
+          when String
+            def interpolate(&str)
+              eval "%{#{str.call}}", str.binding
+            end
+            _finder = _finder.where(interpolate { ranker.with_same })
           end
 
           unless new_record?
